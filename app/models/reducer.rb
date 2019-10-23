@@ -164,7 +164,19 @@ class Reducer < ApplicationRecord
         data: {},
         store: {}
     else
-      raise NotImplementedError.new 'This topic is not supported'
+      raise NotImplementedError.new "Topic #{topic} is not supported"
+    end
+  end
+
+  def extract_fetcher
+    strategy = running_reduction? ? :fetch_minimal : :fetch_all
+    case topic.to_sym
+    when :reduce_by_subject
+      ExtractBySubjectFetcher.new(strategy)
+    when :reduce_by_user
+      ExtractByUserFetcher.new(strategy)
+    else
+      raise NotImplementedError.new "Topic #{topic} is not supported"
     end
   end
 
